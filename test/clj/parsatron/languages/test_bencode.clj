@@ -4,7 +4,8 @@
             [parsatron.languages.bencode :refer :all]))
 
 (deftest test-ben-integer
-  (is (= 42 (run (ben-integer) "i42e"))))
+  (is (= 42 (run (ben-integer) "i42e")))
+  (is (= -42 (run (ben-integer) "i-42e"))))
 
 (deftest test-ben-bytestring
   (is (= "spam" (run (ben-bytestring) "4:spam"))))

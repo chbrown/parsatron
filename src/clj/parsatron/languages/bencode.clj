@@ -11,7 +11,7 @@
 
 (defparser negative-int []
   (let->> [digits (>> (char \-) (many1 (digit)))]
-    (always (read-string (apply str digits)))))
+    (always (- (read-string (apply str digits))))))
 
 ; An integer is encoded as "i" + <digits> + "e"
 (defparser ben-integer []
