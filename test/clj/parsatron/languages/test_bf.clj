@@ -1,28 +1,27 @@
 (ns parsatron.languages.test-bf
-  (:refer-clojure :exclude [char])
-  (:use [the.parsatron]
-        [parsatron.languages.bf]
-        [clojure.test]))
+  (:require [clojure.test :refer :all]
+            [the.parsatron :refer [run]]
+            [parsatron.languages.bf :refer :all]))
 
-(deftest test-accepts-valid-brainf*ck
-  (are [input] (try
-                 (run (bf) input)
-                 true
-                 (catch Exception _
-                   false))
-       ">"
-       "<"
-       "+"
-       "-"
-       "."
-       ","
-       "[+]"
-       ",>++++++[<-------->-],[<+>-]<."))
+(defn valid-bf? [input]
+  (try
+    (do (run (bf) input) true)
+    (catch RuntimeException _ false)
+    (catch Exception _ nil)))
 
-(deftest test-rejects-invalid-brainf*ck
-  (are [input] (thrown? RuntimeException (run (bf) input))
-       "a"
-       "abc"
-       "[+"
-       "]"
-       "[+>[+]"))
+(deftest test-accepts-valid-bf
+  (is (true? (valid-bf? ">")))
+  (is (true? (valid-bf? "<")))
+  (is (true? (valid-bf? "+")))
+  (is (true? (valid-bf? "-")))
+  (is (true? (valid-bf? ".")))
+  (is (true? (valid-bf? ",")))
+  (is (true? (valid-bf? "[+]")))
+  (is (true? (valid-bf? ",>++++++[<-------->-],[<+>-]<."))))
+
+(deftest test-rejects-invalid-bf
+  (is (false? (valid-bf? "a")))
+  (is (false? (valid-bf? "abc")))
+  (is (false? (valid-bf? "[+")))
+  (is (false? (valid-bf? "]")))
+  (is (false? (valid-bf? "[+>[+]"))))
