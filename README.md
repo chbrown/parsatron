@@ -75,14 +75,12 @@ be made to run over sequence of arbitrary "tokens". Clojure's handling of
 sequences and sequence-like things is a feature deeply ingrained in the language's
 ethos. Look for expansion in this area.
 
-* * * * *
-
 Beyond just verifying that a string is a valid member of some language, The
 Parsatron offers you facilities for interacting with and operating on the things
 you parse via sequencing of multiple parsers and binding their results. The
 macros `>>` and `let->>` embody this facility.
 
-As an example, [bencoded strings](http://en.wikipedia.org/wiki/Bencode) are prefixed by their length and a colon:
+As an example, [bencoded strings](https://en.wikipedia.org/wiki/Bencode) are prefixed by their length and a colon:
 
     (defparser ben-string []
       (let->> [length (integer)]
@@ -94,6 +92,31 @@ be used later. `>>` is very similar to Clojure's `do` in that it executes it's
 forms in order, but "throws away" all but the value of the last form.
 
     (run (ben-string) "4:spam") ;; => [\s \p \a \m]
+
+## Roadmap
+
+### 0.1.0
+
+* baseline sane error messages
+
+### 0.4.0
+
+* website with documentation
+  - at the least move github issue discussions into coherent pages
+  - marginalia?
+  - list of other good resources for learning parser combinators
+
+### 1.0
+
+* grammar support
+  - put in a grammar in a BNF format and get back parsatron-implemented parsers
+* 5-7 non-trivial example parsers
+  - at least one using a lexer + parsatron over a seq of lexical tokens, not chars
+* basic compile-time parser optimizations where possible
+* unified clj+cljs codebase + host-environment specific files
+  - low-magic build process
+  - one command to run both clj & cljs tests
+
 
 ## License
 

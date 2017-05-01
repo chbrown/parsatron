@@ -1,7 +1,7 @@
 (ns parsatron.test-trampoline
   (:refer-clojure :exclude [char])
-  (:use [the.parsatron]
-        [clojure.test])
+  (:require [clojure.test :refer [deftest is testing]]
+            [the.parsatron :refer :all])
   (:import (the.parsatron Continue Ok)))
 
 (deftest test-always

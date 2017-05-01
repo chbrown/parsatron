@@ -1,6 +1,6 @@
 (ns parsatron.languages.bencode
   (:refer-clojure :exclude [char])
-  (:use [the.parsatron]))
+  (:require [the.parsatron :refer :all]))
 
 ; a bencoded value can be one of: integer, bytestring, list, dictionary
 (declare ben-value)

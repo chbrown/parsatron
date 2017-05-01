@@ -1,8 +1,7 @@
 (ns parsatron.test
   (:refer-clojure :exclude [char])
-  (:use [the.parsatron]
-        [clojure.test])
-  (:import (the.parsatron SourcePos)))
+  (:require [clojure.test :refer [deftest is are testing]]
+            [the.parsatron :refer :all]))
 
 (defn parser-result? [expected p input]
   (= expected (run p input)))
@@ -116,7 +115,5 @@
     (is (parser-result? nil (>> (char \a) (eof)) "a")))
 
   (testing "parser fails with message when input if left"
-    (is (thrown-with-msg? RuntimeException #"Expected end of input"
-          (run (eof) "a")))
-    (is (thrown-with-msg? RuntimeException #"Expected end of input"
-          (run (>> (char \a) (eof)) "ab")))))
+    (is (thrown-with-msg? RuntimeException #"Expected end of input" (run (eof) "a")))
+    (is (thrown-with-msg? RuntimeException #"Expected end of input" (run (>> (char \a) (eof)) "ab")))))

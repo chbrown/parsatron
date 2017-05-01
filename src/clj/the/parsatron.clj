@@ -12,9 +12,9 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; position
 (defn inc-sourcepos
-  "Increment the source position by a single character, c. On newline,
-   increments the SourcePos's line number and resets the column, on
-   all other characters, increments the column"
+  "Increment the source position by a single character, c.
+  On newline, increments the SourcePos's line number and resets the column,
+  on all other characters, increments the column."
   [{:keys [line column]} c]
   (if (= c \newline)
     (SourcePos. (inc line) 1)
@@ -47,11 +47,10 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; trampoline
 (defn parsatron-poline
-  "A trampoline for executing potentially stack-blowing recursive
-   functions without running out of stack space. This particular
-   trampoline differs from clojure.core/trampoline by requiring
-   continuations to be wrapped in a Continue record. Will loop until
-   the value is no longer a Continue record, returning that."
+  "A trampoline for executing potentially stack-blowing recursive functions
+  without running out of stack space. This particular trampoline differs from
+  clojure.core/trampoline by requiring continuations to be wrapped in a Continue record.
+  Will loop until the value is no longer a Continue record, returning that."
   [f & args]
   (loop [value (apply f args)]
     (condp instance? value
@@ -81,15 +80,14 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; m
 (defn always
-  "A parser that always succeeds with the value given and consumes no
-   input"
+  "A parser that always succeeds with the value given and consumes no input."
   [x]
   (fn [state cok cerr eok eerr]
     (eok x state)))
 
 (defn bind
-  "Parse p, and then q. The function f must be of one argument, it
-   will be given the value of p and must return the q to follow p"
+  "Parse p, and then q. The function f must be of one argument,
+  it will be given the value of p and must return the q to follow p."
   [p f]
   (fn [state cok cerr eok eerr]
     (letfn [(pcok [item state]
@@ -103,14 +101,14 @@
       (Continue. #(p state pcok cerr peok eerr)))))
 
 (defn nxt
-  "Parse p and then q, returning q's value and discarding p's"
+  "Parse p and then q, returning q's value and discarding p's."
   [p q]
   (bind p (fn [_] q)))
 
 (defmacro defparser
   "Defines a new parser. Parsers are simply functions that accept the
-   5 arguments state, cok, cerr, eok, eerr but this macro takes care
-   of writing that ceremony for you and wraps the body in a >>"
+  5 arguments state, cok, cerr, eok, eerr but this macro takes care
+  of writing that ceremony for you and wraps the body in a >>"
   [name args & body]
   `(defn ~name ~args
      (fn [state# cok# cerr# eok# eerr#]
@@ -140,8 +138,8 @@
     (eerr (unknown-error state))))
 
 (defn either
-  "A parser that tries p, upon success, returning its value, and upon
-   failure (if no input was consumed) tries to parse q"
+  "A parser that tries p, upon success, returning its value,
+  and upon failure (if no input was consumed) tries to parse q."
   [p q]
   (fn [state cok cerr eok eerr]
     (letfn [(peerr [err-from-p]
@@ -151,8 +149,7 @@
       (Continue. #(p state cok cerr eok peerr)))))
 
 (defn attempt
-  "A parser that will attempt to parse p, and upon failure never
-   consume any input"
+  "A parser that will attempt to parse p, and upon failure never consume any input."
   [p]
   (fn [state cok cerr eok eerr]
     (Continue. #(p state cok eerr eok eerr))))
@@ -161,11 +158,10 @@
 ;; interacting with the parser's state
 
 (defn extract
-  "Extract information from the Parser's current state. f should be a
-   fn of one argument, the parser's current state, and any value that
-   it deems worthy of returning will be returned by the entire parser.
-   No input is consumed by this parser, and the state itself is not
-   altered."
+  "Extract information from the Parser's current state. f should be a fn of one
+  argument, the parser's current state, and any value that it deems worthy of
+  returning will be returned by the entire parser.
+  No input is consumed by this parser, and the state itself is not altered."
   [f]
   (fn [state _ _ eok _]
     (eok (f state) state)))
@@ -176,7 +172,7 @@
   (extract identity))
 
 (defn lineno
-  "A parser that returns the current line number. It consumes no input"
+  "A parser that returns the current line number. It consumes no input."
   []
   (extract (comp :line :pos)))
 
@@ -184,8 +180,8 @@
 ;; token
 (defn token
   "Consume a single item from the head of the input if (consume? item)
-   is not nil. This parser will fail to consume if either the consume?
-   test returns nil or if the input is empty"
+  is not nil. This parser will fail to consume if either the consume?
+  test returns nil or if the input is empty."
   [consume?]
   (fn [{:keys [input pos] :as state} cok cerr eok eerr]
     (if-not (empty? input)
@@ -197,8 +193,8 @@
 
 (defn many
   "Consume zero or more p. A RuntimeException will be thrown if this
-   combinator is applied to a parser that accepts the empty string, as
-   that would cause the parser to loop forever"
+  combinator is applied to a parser that accepts the empty string, as
+  that would cause the parser to loop forever."
   [p]
   (letfn [(many-err [_ _]
             (fail "Combinator '*' is applied to a parser that accepts an empty string"))
@@ -220,8 +216,7 @@
       (always (cons x xs)))))
 
 (defn lookahead
-  "A parser that upon success consumes no input, but returns what was
-   parsed"
+  "A parser that upon success consumes no input, but returns what was parsed."
   [p]
   (fn [state cok cerr eok eerr]
     (letfn [(ok [item _]
@@ -230,7 +225,7 @@
 
 (defn choice
   "A varargs version of either that tries each given parser in turn,
-   returning the value of the first one that succeeds"
+  returning the value of the first one that succeeds."
   [& parsers]
   (if (empty? parsers)
     (never)
@@ -238,9 +233,9 @@
       (either p (apply choice (rest parsers))))))
 
 (defn eof
-  "A parser to detect the end of input. If there is nothing more to
-   consume from the underlying input, this parser suceeds with a nil
-   value, otherwise it fails"
+  "A parser to detect the end of input.
+  If there is nothing more to consume from the underlying input,
+  this parser suceeds with a nil value, otherwise it fails."
   []
   (fn [{:keys [input pos] :as state} cok cerr eok eerr]
     (if (empty? input)
@@ -274,8 +269,8 @@
                       (list (always s)))))
 
 (defn between
-  "Parse p after parsing open and before parsing close, returning the
-   value of p and discarding the values of open and close"
+  "Parse p after parsing open and before parsing close,
+  returning the value of p and discarding the values of open and close."
   [open close p]
   (let->> [_ open
            x p
@@ -292,7 +287,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; run parsers
 (defn run-parser
-  "Execute a parser p, given some state, Returns Ok or Err"
+  "Execute a parser p, given some state, Returns Ok or Err."
   [p state]
   (parsatron-poline p state
                     (fn cok [item _]
@@ -305,10 +300,9 @@
                       (Err. (show-error err)))))
 
 (defn run
-  "Run a parser p over some input. The input can be a string or a seq
-   of tokens, if the parser produces an error, its message is wrapped
-   in a RuntimeException and thrown, and if the parser succeeds, its
-   value is returned"
+  "Run a parser p over some input. The input can be a string or a seq of tokens,
+  if the parser produces an error, its message is wrapped in a RuntimeException
+  and thrown, and if the parser succeeds, its value is returned."
   [p input]
   (let [result (run-parser p (InputState. input (SourcePos. 1 1)))]
     (condp instance? result
