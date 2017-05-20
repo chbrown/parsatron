@@ -1,4 +1,4 @@
-(defproject chbrown/parsatron "0.0.8"
+(defproject chbrown/parsatron "0.0.9-SNAPSHOT"
   :description "Clojure parser combinators"
   :url "https://github.com/chbrown/parsatron"
   :license {:name "Eclipse Public License"
