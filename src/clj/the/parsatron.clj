@@ -204,13 +204,13 @@
      (let->> [x safe-p
               xs (many safe-p)]
        (always (cons x xs)))
-     (always []))))
+     (always ()))))
 
 (defn times
   "Consume exactly n number of p"
   [n p]
   (if (= n 0)
-    (always [])
+    (always ())
     (let->> [x p
              xs (times (dec n) p)]
       (always (cons x xs)))))
