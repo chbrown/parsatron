@@ -1,5 +1,7 @@
 # The Parsatron
 
+[![Clojars Project](https://img.shields.io/clojars/v/chbrown/parsatron.svg)](https://clojars.org/chbrown/parsatron)
+
 Born from Haskell's Parsec library, The Parsatron is a functional
 parser library. The Parsatron provides a lot of very small functions that can
 be combined into larger ones to very quickly write parsers for languages.
@@ -14,11 +16,13 @@ with it.
 
 ## Installation
 
-You can use The Parsatron by including
+Releases are deployed to [Clojars](https://clojars.org/chbrown/parsatron).
+Simply add
 
-    [the/parsatron "0.0.7"]
+    [chbrown/parsatron "0.0.8"]
 
-in your `project.clj` dependencies. It's available for download from Clojars.
+to your `project.clj` dependencies.
+
 
 ## ClojureScript Support
 
