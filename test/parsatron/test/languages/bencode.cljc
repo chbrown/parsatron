@@ -1,7 +1,7 @@
-(ns parsatron.languages.test-bencode
-  (:require [clojure.test :refer :all]
-            [the.parsatron :refer [run]]
-            [parsatron.languages.bencode :refer :all]))
+(ns parsatron.test.languages.bencode
+  (:require [parsatron.core :refer [run]]
+            [parsatron.languages.bencode :refer [ben-integer ben-bytestring ben-list ben-dictionary]]
+            [clojure.test :refer [deftest is testing]]))
 
 (deftest test-ben-integer
   (is (= 42 (run (ben-integer) "i42e")))
